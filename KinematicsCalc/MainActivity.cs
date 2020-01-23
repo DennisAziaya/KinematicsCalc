@@ -30,6 +30,8 @@ namespace KinematicsCalc
 
         private string variableToCalculate;
         private string calculationToUse;
+        private string combined_strings;
+        private string units;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -112,6 +114,218 @@ namespace KinematicsCalc
         {
             calculationToUse = _spinnerChooseCalculation.SelectedItem.ToString();
             _textViewChooseCalculation.Text = calculationToUse;
+            chooseCalculation(calculationToUse);
+        }
+
+        void chooseCalculation(string calculation)
+        {
+            switch (variableToCalculate)
+            {
+                case "Final velocity":
+                    chooseFinalVelocityCalculation(calculation);
+                    break;
+
+                case "Initial velocity":
+                    chooseInitialVelocityCalculation(calculation);
+                    break;
+
+                case "Acceleration":
+                    chooseAccelerationCalculation(calculation);
+                    break;
+
+                case "Displacement":
+                    chooseDisplacementCalculation(calculation);
+                    break;
+
+                case "Time":
+                    chooseTimeCalculation(calculation);
+                    break;
+            }
+        }
+
+
+        void chooseFinalVelocityCalculation(string calculation)
+        {
+            switch (calculation)
+            {
+                case"vf^2 = vi^2 + 2*a*d":
+                    combined_strings = SetHints("vi", "a", "d");
+                    break;
+                
+                case "vf = vi + a*t":
+                    combined_strings = SetHints("vi", "a", "t");
+                    break;
+
+                case "d = 0.5*(vi=vf)*t":
+                    combined_strings = SetHints("vi", "d", "t");
+                    break;
+            }
+            CalculateFinalVelocity(combined_strings);
+        } 
+
+        void chooseInitialVelocityCalculation(string calculation)
+        {
+
+            switch (calculation)
+            {
+                case "d = vi*t+0.5*a*t^2":
+                    combined_strings = SetHints( "a", "d", "t");
+                    break;
+
+                case "vf^2 = vi^2 + 2*a*d":
+                    combined_strings = SetHints("vf", "a", "d");
+                    break;
+
+                case "vf = vi + a*t":
+                    combined_strings = SetHints("vf", "a", "t");
+                    break;
+
+                case "d = 0.5*(vi=vf)*t":
+                    combined_strings = SetHints("vf", "d", "t");
+                    break;
+            }
+            CalculateInitialVelocity(combined_strings);
+
+
+        }
+
+        void chooseAccelerationCalculation(string calculation)
+        {
+
+
+            switch (calculation)
+            {
+                case "d = vi*t+0.5*a*t^2":
+                    combined_strings = SetHints( "vi", "d", "t");
+                    break;
+
+                case "vf^2 = vi^2 + 2*a*d":
+                    combined_strings = SetHints("vf", "vi", "d");
+                    break;
+
+                case "vf = vi + a*t":
+                    combined_strings = SetHints("vf", "vi", "t");
+                    break;
+
+            }
+            CalculateAcceleration(combined_strings);
+
+        }
+
+        void chooseDisplacementCalculation(string calculation)
+        {
+
+            switch (calculation)
+            {
+                case "d = vi*t+0.5*a*t^2":
+                    combined_strings = SetHints("vi", "a", "t");
+                    break;
+
+                case "vf^2 = vi^2 + 2*a*d":
+                    combined_strings = SetHints("vf", "vi", "a");
+                    break;
+
+                case "d = 0.5*(vi=vf)*t":
+                    combined_strings = SetHints("vf", "vi", "t");
+                    break;
+            }
+            CalculateDisplacement(combined_strings);
+
+
+        }
+
+        void chooseTimeCalculation(string calculation)
+        {
+
+            switch (calculation)
+            {
+               
+                case "vf = vi + a*t":
+                    combined_strings = SetHints("vf", "vi", "a");
+                    break;
+
+                case "d = 0.5*(vi=vf)*t":
+                    combined_strings = SetHints("vf", "vi", "d");
+                    break;
+            }
+            CalculateTime(combined_strings);
+
+        }
+
+
+
+
+        void CalculateFinalVelocity(string variable)
+        {
+
+            ParseVariable();
+
+            if(variable == "vi, a, d")
+            {
+                finalAnswer = Math.Pow((Math.Pow(variable1,2) + 2 * variable2 + variable3), 0.5);
+            }
+            else if (variable == "vi, a, t")
+            {
+                finalAnswer = variable1 + variable2 + variable3;
+            }
+
+            else if (variable == "vi, d, t")
+            {
+                finalAnswer = (2 * variable2 / variable3) - variable1;
+            }
+
+            units = "m/s";
+            PrintResult();
+
+        }
+
+        void CalculateInitialVelocity(string variable)
+        {
+
+        }
+
+        void CalculateAcceleration(string variable)
+        {
+
+        }
+
+        void CalculateDisplacement(string variable)
+        {
+
+        }
+
+        void CalculateTime(string variable)
+        {
+
+        }
+
+        string SetHints(string variable_1, string variable_2, string variable_3)
+        {
+
+            _editTextField1.Hint = variable_1;
+            _editTextField2.Hint = variable_2;
+            _editTextField3.Hint = variable_3;
+
+            _editTextField1.Hint = " ";
+            _editTextField2.Hint = " ";
+            _editTextField3.Hint = " ";
+
+            return variable_1 + "," + variable_2 + "," + variable_3;
+
+
+        }
+
+
+        void ParseVariable()
+        {
+            variable1 = double.Parse(_editTextField1.Text);
+            variable2 = double.Parse(_editTextField2.Text);
+            variable3 = double.Parse(_editTextField3.Text);
+        }
+
+        void PrintResult()
+        {
+            answerText.text = finalAnswer.ToString() + " " + units;
         }
     }
 }
